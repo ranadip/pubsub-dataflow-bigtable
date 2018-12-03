@@ -85,26 +85,26 @@ public class CurrentConditions {
       BigtableHelper.writeToBigtable(currentConditions, options);
     }
 
-    currentConditions.apply("ToBQRow", ParDo.of(new DoFn<LaneInfo, TableRow>() {
-      @ProcessElement
-      public void processElement(ProcessContext c) throws Exception {
-        TableRow row = new TableRow();
-        LaneInfo info = c.element();
-        row.set("timestamp", info.getTimestamp());
-        row.set("latitude", info.getLatitude());
-        row.set("longitude", info.getLongitude());
-        row.set("highway", info.getHighway());
-        row.set("direction", info.getDirection());
-        row.set("lane", info.getLane());
-        row.set("speed", info.getSpeed());
-        row.set("sensorId", info.getSensorKey());
-        c.output(row);
-      }
-    })) //
-        .apply(BigQueryIO.writeTableRows().to(currConditionsTable)//
-            .withSchema(schema)//
-            .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
-            .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED));
+    // currentConditions.apply("ToBQRow", ParDo.of(new DoFn<LaneInfo, TableRow>() {
+    //   @ProcessElement
+    //   public void processElement(ProcessContext c) throws Exception {
+    //     TableRow row = new TableRow();
+    //     LaneInfo info = c.element();
+    //     row.set("timestamp", info.getTimestamp());
+    //     row.set("latitude", info.getLatitude());
+    //     row.set("longitude", info.getLongitude());
+    //     row.set("highway", info.getHighway());
+    //     row.set("direction", info.getDirection());
+    //     row.set("lane", info.getLane());
+    //     row.set("speed", info.getSpeed());
+    //     row.set("sensorId", info.getSensorKey());
+    //     c.output(row);
+    //   }
+    // })) //
+    //     .apply(BigQueryIO.writeTableRows().to(currConditionsTable)//
+    //         .withSchema(schema)//
+    //         .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    //         .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED));
 
     p.run();
   }
